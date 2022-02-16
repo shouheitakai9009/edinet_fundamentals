@@ -1,6 +1,7 @@
 import requests
 import datetime
 import pandas as pd
+from utils import file
 
 # 1日分のEDINETドキュメントを取得
 documents_date = datetime.date(2022, 2, 15).strftime("%Y-%m-%d")
@@ -11,4 +12,11 @@ df_documents = pd.DataFrame(documents)
 # 有価証券報告書のみを取得
 df_documents = df_documents.query('ordinanceCode == "010" and formCode == "020000" and xbrlFlag == "1"')
 
-print(df_documents)
+# ZIPファイルをダウンロード
+for i, documents_item in df_documents.iterrows():
+  docID = documents_item['docID']
+  response = requests.get(f"https://disclosure.edinet-fsa.go.jp/api/v1/documents/{docID}?type=1")
+  file.zip_write(docID, response)
+  file.select_file_in_zip(docID)
+  file.move_xbrl(docID)
+  file.remove_trash(docID)
