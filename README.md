@@ -1,0 +1,2 @@
+# edinet_fundamentals
+EDINET APIから取得してきた有価証券報告書を元にそれらをデータベースに溜めます
